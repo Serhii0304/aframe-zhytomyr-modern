@@ -33,6 +33,7 @@ import {
   fitPhoto,
   INITIAL_VIEW,
   MAX_ZOOM,
+  panMouseDrag,
   resizeMouseView,
   wheelZoomScale,
   zoomPhoto,
@@ -230,6 +231,8 @@ function ZoomablePhoto({
       return;
     if ((event.target as Element).closest('button, a')) return;
     if (event.pointerType === 'mouse') {
+      // Native selection/image dragging cancels Pointer Events in Chrome.
+      event.preventDefault();
       mouseDrag.current = event.pointerId;
       if (wheelEnd.current !== null) clearTimeout(wheelEnd.current);
       wheelEnd.current = null;
@@ -273,7 +276,12 @@ function ZoomablePhoto({
       const dx = points[0].x - active.point.x,
         dy = points[0].y - active.point.y;
       if (Math.hypot(dx, dy) > 8) active.moved = true;
-      if (active.view.scale > 1)
+      if (active.view.scale > 1 && event.pointerType === 'mouse') {
+        const next = panMouseDrag(active, points[0], fitted, viewport);
+        active.point = next.point;
+        active.view = next.view;
+        update(next.view);
+      } else if (active.view.scale > 1)
         update(
           constrainView(
             { ...active.view, x: active.view.x + dx, y: active.view.y + dy },
@@ -435,6 +443,7 @@ function ZoomablePhoto({
       <div
         ref={stage}
         className="viewer-stage"
+        draggable={false}
         data-zoomed={view.scale > 1 || undefined}
         data-interacting={interacting || undefined}
         data-nav-side={view.scale === 1 ? hoveredHalf || undefined : undefined}
@@ -449,6 +458,9 @@ function ZoomablePhoto({
         onPointerCancel={(event) => finishPointer(event, true)}
         onLostPointerCapture={(event) => finishPointer(event, true)}
         onPointerLeave={() => setHoveredHalf(null)}
+        onDragStart={(event) => {
+          if (mouseDrag.current !== null) event.preventDefault();
+        }}
       >
         {!loaded && !failed && (
           <output className="viewer-loading">Завантажуємо фото…</output>

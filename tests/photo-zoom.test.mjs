@@ -7,7 +7,61 @@ import {
   INITIAL_VIEW,
   wheelZoomScale,
   resizeMouseView,
+  panMouseDrag,
 } from '../lib/photo-zoom.ts';
+
+test('At 400% the mouse reverses immediately after dragging beyond any photo edge', () => {
+  const image = { width: 600, height: 500 },
+    viewport = { width: 1400, height: 800 };
+  for (const axis of ['x', 'y']) {
+    const limit = axis === 'x' ? 500 : 600;
+    for (const sign of [-1, 1]) {
+      let drag = {
+        point: { x: 0, y: 0 },
+        view: { scale: 4, x: 0, y: 0, [axis]: sign * (limit - 10) },
+      };
+      drag = panMouseDrag(
+        drag,
+        { x: 0, y: 0, [axis]: sign * 900 },
+        image,
+        viewport,
+      );
+      assert.equal(drag.view[axis], sign * limit);
+      drag = panMouseDrag(
+        drag,
+        { x: 0, y: 0, [axis]: sign * 899 },
+        image,
+        viewport,
+      );
+      assert.equal(drag.view[axis], sign * (limit - 1));
+      drag = panMouseDrag(
+        drag,
+        { x: 0, y: 0, [axis]: sign * 850 },
+        image,
+        viewport,
+      );
+      assert.equal(drag.view[axis], sign * (limit - 50));
+      assert.equal(drag.view.scale, 4);
+    }
+  }
+});
+
+test('Repeated mouse strokes at 400% follow both axes without accumulating overshoot', () => {
+  const size = { width: 600, height: 400 };
+  let view = { scale: 4, x: 0, y: 0 };
+  for (let i = 0; i < 40; i++) {
+    let drag = { point: { x: 0, y: 0 }, view };
+    drag = panMouseDrag(drag, { x: 5000, y: 5000 }, size, size);
+    assert.equal(drag.view.x, 900);
+    assert.equal(drag.view.y, 600);
+    drag = panMouseDrag(drag, { x: 4900, y: 4950 }, size, size);
+    assert.equal(drag.view.x, 800);
+    assert.equal(drag.view.y, 550);
+    view = panMouseDrag(drag, { x: 3000, y: 3000 }, size, size).view;
+    assert.equal(view.x, -900);
+    assert.equal(view.y, -600);
+  }
+});
 
 test('Desktop fullscreen preserves zoom and viewed detail; refitting constrains bounds', () => {
   const image = { width: 1200, height: 1600 };

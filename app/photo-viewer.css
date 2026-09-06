@@ -237,6 +237,9 @@ body:has(.photo-viewer) [data-slot='dialog-overlay'] {
   padding-right: max(8px, env(safe-area-inset-right));
 }
 @media (hover: hover) and (pointer: fine) {
+  .viewer-stage {
+    user-select: none;
+  }
   .photo-viewer[data-slot='dialog-content'] {
     /* Do not animate frame geometry and repeatedly rebase an active mouse drag. */
     transition: none;

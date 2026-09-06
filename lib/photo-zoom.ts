@@ -44,6 +44,25 @@ export function constrainView(
     y: Math.max(-limitY, Math.min(limitY, view.y)),
   };
 }
+/** Advance a held mouse drag from its latest clamped position, not its origin. */
+export function panMouseDrag(
+  drag: { point: Point; view: PhotoView },
+  point: Point,
+  image: Size,
+  viewport: Size,
+) {
+  const view = constrainView(
+    {
+      ...drag.view,
+      x: drag.view.x + point.x - drag.point.x,
+      y: drag.view.y + point.y - drag.point.y,
+    },
+    image,
+    viewport,
+  );
+  // Discard overshoot: reversing direction at an edge must move immediately.
+  return { point, view };
+}
 /** Preserve desktop zoom and the viewed detail when the frame changes size. */
 export function resizeMouseView(
   view: PhotoView,
