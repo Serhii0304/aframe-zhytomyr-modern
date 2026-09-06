@@ -9,9 +9,9 @@
   gap: 0;
   padding: 0;
   overflow: hidden;
-  color: #203022;
-  background: #f7f9f2;
-  border: 1px solid #ffffff60;
+  color: #f3f6ee;
+  background: transparent;
+  border: 1px solid #ffffff25;
   border-radius: 14px;
   box-shadow: 0 24px 90px #00000055;
   transform: none;
@@ -28,42 +28,42 @@
 .photo-viewer[data-expanded] {
   top: 0;
   left: 0;
-  width: 100%;
+  width: 100dvw;
   height: 100dvh;
   max-height: none;
   max-width: none;
-  translate: none;
   transform: none;
   border: 0;
   border-radius: 0;
   animation: none;
 }
 body:has(.photo-viewer) [data-slot='dialog-overlay'] {
-  background: #071009cb;
+  background: #071009b8;
   backdrop-filter: none;
 }
 .viewer-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  gap: 16px;
-  padding: 16px 20px;
-  border-bottom: 1px solid #d7e0cd;
+  gap: 12px;
+  padding: 4px 12px;
+  background: #142019df;
+  border-bottom: 1px solid #ffffff12;
 }
 .viewer-title {
   min-width: 0;
 }
 .viewer-title [data-slot='dialog-title'] {
   font-family: Manrope, sans-serif;
-  font-size: 1.125rem;
+  font-size: 1rem;
   font-weight: 650;
   line-height: 1.4;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 .viewer-title [data-slot='dialog-description'] {
-  color: #596951;
-  font-size: 0.875rem;
-  line-height: 1.5;
-  margin: 4px 0 0;
+  display: none;
 }
 .viewer-header-actions {
   display: flex;
@@ -73,18 +73,18 @@ body:has(.photo-viewer) [data-slot='dialog-overlay'] {
 }
 .photo-viewer button,
 .viewer-error a {
-  min-height: 46px;
-  min-width: 46px;
+  min-height: 44px;
+  min-width: 44px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 8px;
-  border: 1px solid #cfdbc5;
-  background: #edf2e7;
-  color: #233a22;
+  border: 1px solid #ffffff1a;
+  background: #ffffff08;
+  color: #f3f6ee;
   border-radius: 7px;
-  padding: 9px 12px;
-  font-size: 1rem;
+  padding: 6px 10px;
+  font-size: 0.875rem;
   line-height: 1.4;
   font-weight: 600;
   flex-shrink: 0;
@@ -93,7 +93,7 @@ body:has(.photo-viewer) [data-slot='dialog-overlay'] {
 .photo-viewer button:focus-visible,
 .viewer-stage:focus-visible,
 .viewer-error a:focus-visible {
-  outline: 3px solid #789945;
+  outline: 2px solid #d9ef88;
   outline-offset: -3px;
 }
 .photo-viewer button:disabled {
@@ -128,7 +128,7 @@ body:has(.photo-viewer) [data-slot='dialog-overlay'] {
   align-items: center;
   justify-content: center;
   isolation: isolate;
-  background: #101a13;
+  background: transparent;
   touch-action: none;
   overscroll-behavior: contain;
   cursor: zoom-in;
@@ -174,16 +174,12 @@ body:has(.photo-viewer) [data-slot='dialog-overlay'] {
   margin: 0;
 }
 .viewer-controls {
-  background: #f7f9f2;
-  padding: 12px 20px 16px;
-  border-top: 1px solid #d7e0cd;
+  background: #142019df;
+  padding: 6px 12px;
+  border-top: 1px solid #ffffff12;
 }
 .viewer-hint {
-  text-align: center;
-  color: #596951;
-  font-size: 0.875rem;
-  line-height: 1.5;
-  margin: 0 0 12px;
+  display: none;
 }
 .viewer-toolbar {
   display: flex;
@@ -212,19 +208,19 @@ body:has(.photo-viewer) [data-slot='dialog-overlay'] {
   font-variant-numeric: tabular-nums;
 }
 .photo-viewer[data-expanded] .viewer-header {
-  padding-top: max(12px, env(safe-area-inset-top));
-  padding-left: max(20px, env(safe-area-inset-left));
-  padding-right: max(20px, env(safe-area-inset-right));
+  padding-top: max(4px, env(safe-area-inset-top));
+  padding-left: max(8px, env(safe-area-inset-left));
+  padding-right: max(8px, env(safe-area-inset-right));
 }
 .photo-viewer[data-expanded] .viewer-controls {
-  padding-bottom: max(12px, env(safe-area-inset-bottom));
-  padding-left: max(20px, env(safe-area-inset-left));
-  padding-right: max(20px, env(safe-area-inset-right));
+  padding-bottom: max(6px, env(safe-area-inset-bottom));
+  padding-left: max(8px, env(safe-area-inset-left));
+  padding-right: max(8px, env(safe-area-inset-right));
 }
 @media (hover: hover) and (pointer: fine) {
   .photo-viewer button:not(:disabled):hover {
-    background: #e0eacb;
-    border-color: #a7bc85;
+    background: #ffffff18;
+    border-color: #ffffff40;
   }
   .photo-viewer .viewer-expand:hover,
   .photo-viewer .viewer-back:hover {
@@ -238,22 +234,19 @@ body:has(.photo-viewer) [data-slot='dialog-overlay'] {
     border-radius: 12px;
   }
   .photo-viewer[data-expanded] {
-    width: 100%;
+    width: 100dvw;
     height: 100dvh;
     border-radius: 0;
   }
   .viewer-header {
-    padding: 12px;
-    gap: 10px;
-    align-items: flex-start;
+    padding: 4px 8px;
+    gap: 8px;
   }
   .viewer-title [data-slot='dialog-title'] {
     font-size: 1rem;
   }
-  .viewer-title [data-slot='dialog-description'] {
-    font-size: 0.875rem;
-  }
-  .viewer-close span {
+  .viewer-close span,
+  .viewer-reset span {
     display: none;
   }
   .photo-viewer .viewer-back {
@@ -264,16 +257,12 @@ body:has(.photo-viewer) [data-slot='dialog-overlay'] {
     gap: 6px;
   }
   .viewer-controls {
-    padding: 10px 12px 12px;
-  }
-  .viewer-hint {
-    margin-bottom: 10px;
-    text-align: left;
+    padding: 6px 8px;
   }
   .viewer-toolbar {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 10px;
+    gap: 6px;
   }
   .viewer-zoom {
     grid-row: 1;
@@ -290,22 +279,24 @@ body:has(.photo-viewer) [data-slot='dialog-overlay'] {
     font-size: 0.875rem;
   }
   .viewer-reset {
-    margin-left: 6px;
+    margin-left: 0;
+  }
+  .viewer-paging,
+  .viewer-zoom {
+    gap: 4px;
+  }
+  .viewer-paging > span {
+    min-width: 30px;
+    font-size: 0.875rem;
+  }
+  .viewer-zoom output {
+    min-width: 42px;
+    font-size: 0.875rem;
   }
   .photo-viewer[data-expanded] .viewer-toolbar {
     display: flex;
     flex-wrap: wrap;
-    justify-content: center;
-  }
-  .photo-viewer[data-expanded] .viewer-paging {
-    order: 2;
-  }
-  .photo-viewer[data-expanded] .viewer-header {
-    align-items: center;
-    flex-wrap: wrap;
-  }
-  .photo-viewer[data-expanded] .viewer-title {
-    flex: 1 1 130px;
+    justify-content: space-between;
   }
 }
 /* Landscape uses a short row, wrapping only when the screen cannot fit it. */
@@ -316,11 +307,11 @@ body:has(.photo-viewer) [data-slot='dialog-overlay'] {
     max-height: none;
   }
   .photo-viewer[data-expanded] {
-    width: 100%;
+    width: 100dvw;
     height: 100dvh;
   }
   .viewer-header {
-    padding-block: 6px;
+    padding-block: 4px;
     align-items: center;
   }
   .viewer-title [data-slot='dialog-description'],
@@ -341,7 +332,7 @@ body:has(.photo-viewer) [data-slot='dialog-overlay'] {
     gap: 4px;
   }
   .viewer-zoom output {
-    min-width: 52px;
+    min-width: 42px;
   }
   .viewer-reset {
     margin-left: 0;
@@ -371,6 +362,6 @@ body:has(.photo-viewer) [data-slot='dialog-overlay'] {
     gap: 2px;
   }
   .viewer-paging > span {
-    min-width: 38px;
+    min-width: 30px;
   }
 }

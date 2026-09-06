@@ -328,8 +328,10 @@ function ZoomablePhoto({
   });
   useEffect(() => {
     const keydown = (event: KeyboardEvent) => handleKeyDown(event);
-    window.addEventListener('keydown', keydown);
-    return () => window.removeEventListener('keydown', keydown);
+    // Dialog primitives can stop bubbling keyboard events. Capture only while
+    // the viewer is mounted, preserving modified browser shortcuts above.
+    window.addEventListener('keydown', keydown, true);
+    return () => window.removeEventListener('keydown', keydown, true);
   }, []);
 
   return (
@@ -499,6 +501,9 @@ export function PhotoViewer({
       <DialogContent
         className="photo-viewer"
         data-expanded={expanded || undefined}
+        // Keep this reset outside CSS optimization: translate is independent of
+        // transform, and Tailwind centers the compact dialog with -50%/-50%.
+        style={expanded ? { translate: 'none' } : undefined}
         showCloseButton={false}
         initialFocus={closeButton}
       >
