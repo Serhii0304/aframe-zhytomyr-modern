@@ -33,6 +33,8 @@ import {
   fitPhoto,
   INITIAL_VIEW,
   MAX_ZOOM,
+  resizeMouseView,
+  wheelZoomScale,
   zoomPhoto,
   type PhotoView,
   type Point,
@@ -84,6 +86,11 @@ function ZoomablePhoto({
   const bounds = useRef({ left: 0, top: 0, width: 0, height: 0 });
   const measured = useRef<Size>({ width: 0, height: 0 });
   const lastTap = useRef<{ time: number; point: Point } | null>(null);
+  const wheelEnd = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const mouseDrag = useRef<number | null>(null);
+  const [hoveredHalf, setHoveredHalf] = useState<'previous' | 'next' | null>(
+    null,
+  );
   const [imageState, setImageState] = useState({
     image: '',
     ready: false,
@@ -104,6 +111,9 @@ function ZoomablePhoto({
       });
   }
   function reset() {
+    if (wheelEnd.current !== null) clearTimeout(wheelEnd.current);
+    wheelEnd.current = null;
+    mouseDrag.current = null;
     pointers.current.clear();
     gesture.current = null;
     setInteracting(false);
@@ -112,6 +122,7 @@ function ZoomablePhoto({
   }
   function zoomTo(scale: number, point: Point = { x: 0, y: 0 }) {
     if (!loaded || failed) return;
+    mouseDrag.current = null;
     pointers.current.clear();
     gesture.current = null;
     setInteracting(false);
@@ -136,6 +147,19 @@ function ZoomablePhoto({
           height === measured.current.height
         )
           return;
+        const nextSize = { width, height };
+        // Desktop fullscreen changes the frame, not the user's selected zoom.
+        // Touch devices still fit the whole photo on rotation as before.
+        const nextView =
+          !firstMeasure &&
+          window.matchMedia('(hover: hover) and (pointer: fine)').matches
+            ? resizeMouseView(
+                camera.current,
+                fitPhoto(imageDimensions[photo.image], measured.current),
+                fitPhoto(imageDimensions[photo.image], nextSize),
+                nextSize,
+              )
+            : INITIAL_VIEW;
         firstMeasure = false;
         measured.current = { width, height };
         bounds.current = {
@@ -147,9 +171,13 @@ function ZoomablePhoto({
         pointers.current.clear();
         gesture.current = null;
         lastTap.current = null;
-        camera.current = INITIAL_VIEW;
+        if (wheelEnd.current !== null) clearTimeout(wheelEnd.current);
+        wheelEnd.current = null;
+        mouseDrag.current = null;
+        setHoveredHalf(null);
+        camera.current = nextView;
         setViewport({ width, height });
-        setView(INITIAL_VIEW);
+        setView(nextView);
         setInteracting(false);
       });
     };
@@ -158,6 +186,7 @@ function ZoomablePhoto({
     measure();
     return () => {
       observer.disconnect();
+      if (wheelEnd.current !== null) clearTimeout(wheelEnd.current);
       if (sizeFrame !== null) cancelAnimationFrame(sizeFrame);
       if (frame.current !== null) {
         cancelAnimationFrame(frame.current);
@@ -199,6 +228,12 @@ function ZoomablePhoto({
       (event.pointerType === 'mouse' && event.button !== 0)
     )
       return;
+    if ((event.target as Element).closest('button, a')) return;
+    if (event.pointerType === 'mouse') {
+      mouseDrag.current = event.pointerId;
+      if (wheelEnd.current !== null) clearTimeout(wheelEnd.current);
+      wheelEnd.current = null;
+    }
     const rect = event.currentTarget.getBoundingClientRect();
     bounds.current = {
       left: rect.left,
@@ -212,6 +247,12 @@ function ZoomablePhoto({
     setInteracting(true);
   }
   function pointerMove(event: ReactPointerEvent<HTMLDivElement>) {
+    if (event.pointerType === 'mouse' && camera.current.scale === 1) {
+      const rect = event.currentTarget.getBoundingClientRect();
+      setHoveredHalf(
+        event.clientX < rect.left + rect.width / 2 ? 'previous' : 'next',
+      );
+    }
     if (!pointers.current.has(event.pointerId)) return;
     pointers.current.set(event.pointerId, localPoint(event));
     const active = gesture.current;
@@ -259,6 +300,11 @@ function ZoomablePhoto({
       ) {
         lastTap.current = null;
         onMove(dx < 0 ? 1 : -1);
+      } else if (!active.moved && event.pointerType === 'mouse') {
+        // Mouse clicks navigate; mouse drags pan. Double-tap zoom is touch-only.
+        if (active.view.scale === 1 && camera.current.scale === 1 && count > 1)
+          onMove(point.x < 0 ? -1 : 1);
+        lastTap.current = null;
       } else if (!active.moved) {
         const previous = lastTap.current;
         if (
@@ -272,6 +318,9 @@ function ZoomablePhoto({
       } else lastTap.current = null;
     }
     pointers.current.delete(event.pointerId);
+    if (event.pointerType === 'mouse') {
+      mouseDrag.current = null;
+    }
     if (cancelled) lastTap.current = null;
     if (event.currentTarget.hasPointerCapture(event.pointerId))
       event.currentTarget.releasePointerCapture(event.pointerId);
@@ -279,6 +328,53 @@ function ZoomablePhoto({
     beginGesture(false);
     setInteracting(pointers.current.size > 0);
   }
+  const handleWheel = useEffectEvent((event: WheelEvent) => {
+    // Keep Ctrl/Cmd + wheel available for browser accessibility zoom.
+    if (event.ctrlKey || event.metaKey || !loaded || failed || !stage.current)
+      return;
+    event.preventDefault();
+    // A residual wheel event must not discard a mouse drag already in progress.
+    if (mouseDrag.current !== null && pointers.current.has(mouseDrag.current))
+      return;
+    const element = stage.current;
+    const rect = element.getBoundingClientRect();
+    const point = {
+      x: event.clientX - rect.left - element.clientWidth / 2,
+      y: event.clientY - rect.top - element.clientHeight / 2,
+    };
+    pointers.current.clear();
+    gesture.current = null;
+    lastTap.current = null;
+    setHoveredHalf(null);
+    setInteracting(true);
+    update(
+      zoomPhoto(
+        camera.current,
+        wheelZoomScale(
+          camera.current.scale,
+          event.deltaY,
+          event.deltaMode,
+          viewport.height,
+        ),
+        point,
+        point,
+        fitted,
+        viewport,
+      ),
+    );
+    if (wheelEnd.current !== null) clearTimeout(wheelEnd.current);
+    wheelEnd.current = setTimeout(() => {
+      wheelEnd.current = null;
+      setInteracting(false);
+    }, 140);
+  });
+  useEffect(() => {
+    const element = stage.current;
+    if (!element) return;
+    const wheel = (event: WheelEvent) => handleWheel(event);
+    element.addEventListener('wheel', wheel, { passive: false });
+    return () => element.removeEventListener('wheel', wheel);
+  }, []);
   const handleKeyDown = useEffectEvent((event: KeyboardEvent) => {
     if (event.ctrlKey || event.metaKey || event.altKey) return;
     if (event.key === '+' || event.key === '=') {
@@ -341,11 +437,18 @@ function ZoomablePhoto({
         className="viewer-stage"
         data-zoomed={view.scale > 1 || undefined}
         data-interacting={interacting || undefined}
+        data-nav-side={view.scale === 1 ? hoveredHalf || undefined : undefined}
+        title={
+          view.scale === 1
+            ? 'Клік ліворуч або праворуч — інше фото. Коліщатко — масштаб.'
+            : 'Затисніть ліву кнопку миші та пересувайте фото. На телефоні — одним пальцем.'
+        }
         onPointerDown={pointerDown}
         onPointerMove={pointerMove}
         onPointerUp={(event) => finishPointer(event)}
         onPointerCancel={(event) => finishPointer(event, true)}
         onLostPointerCapture={(event) => finishPointer(event, true)}
+        onPointerLeave={() => setHoveredHalf(null)}
       >
         {!loaded && !failed && (
           <output className="viewer-loading">Завантажуємо фото…</output>
@@ -383,32 +486,49 @@ function ZoomablePhoto({
             transform: `translate3d(${view.x}px, ${view.y}px, 0) scale(${view.scale})`,
           }}
         />
-      </div>
-      <div className="viewer-controls">
-        <p className="viewer-hint">
-          Два пальці або «+» — збільшити. Збільшене фото можна пересувати.
-        </p>
-        <div className="viewer-toolbar">
-          <div className="viewer-paging" aria-label="Перемикання фотографій">
+        {count > 1 && (
+          <>
             <button
               type="button"
+              className="viewer-side-arrow viewer-previous"
               aria-label="Попереднє фото"
+              style={{
+                left: Math.max(10, (viewport.width - fitted.width) / 2 - 56),
+              }}
               onClick={() => onMove(-1)}
-              disabled={count < 2}
             >
               <ChevronLeft />
             </button>
-            <span aria-live="polite" aria-atomic="true">
-              {index + 1} / {count}
-            </span>
             <button
               type="button"
+              className="viewer-side-arrow viewer-next"
               aria-label="Наступне фото"
+              style={{
+                right: Math.max(10, (viewport.width - fitted.width) / 2 - 56),
+              }}
               onClick={() => onMove(1)}
-              disabled={count < 2}
             >
               <ChevronRight />
             </button>
+          </>
+        )}
+      </div>
+      <div className="viewer-controls">
+        <p className="viewer-hint">
+          Миша: клік ліворуч або праворуч — інше фото, коліщатко — масштаб,
+          перетягування з лівою кнопкою миші — пересунути збільшене фото.
+          Телефон: свайп — інше фото, два пальці — масштаб, один палець —
+          пересунути збільшене фото.
+        </p>
+        <div className="viewer-toolbar">
+          <div className="viewer-count">
+            <span
+              aria-label="Номер фотографії"
+              aria-live="polite"
+              aria-atomic="true"
+            >
+              {index + 1} / {count}
+            </span>
           </div>
           <div className="viewer-zoom" aria-label="Масштаб фотографії">
             <button

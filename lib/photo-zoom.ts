@@ -4,6 +4,18 @@ export type PhotoView = Point & { scale: number };
 export const INITIAL_VIEW: PhotoView = { scale: 1, x: 0, y: 0 };
 export const MAX_ZOOM = 4;
 
+/** Normalize mouse wheels and trackpads without large jumps from page deltas. */
+export function wheelZoomScale(
+  scale: number,
+  delta: number,
+  mode: number,
+  height: number,
+) {
+  const pixels = delta * (mode === 1 ? 16 : mode === 2 ? height : 1);
+  const bounded = Math.max(-240, Math.min(240, pixels));
+  return Math.min(MAX_ZOOM, Math.max(1, scale * Math.exp(-bounded * 0.002)));
+}
+
 export function fitPhoto(image: Size, viewport: Size): Size {
   if (
     image.width <= 0 ||
@@ -31,6 +43,24 @@ export function constrainView(
     x: Math.max(-limitX, Math.min(limitX, view.x)),
     y: Math.max(-limitY, Math.min(limitY, view.y)),
   };
+}
+/** Preserve desktop zoom and the viewed detail when the frame changes size. */
+export function resizeMouseView(
+  view: PhotoView,
+  before: Size,
+  after: Size,
+  viewport: Size,
+): PhotoView {
+  if (!before.width || !before.height) return INITIAL_VIEW;
+  return constrainView(
+    {
+      scale: view.scale,
+      x: (view.x * after.width) / before.width,
+      y: (view.y * after.height) / before.height,
+    },
+    after,
+    viewport,
+  );
 }
 /** Keep the same image point beneath the midpoint of a pinch or zoom action. */
 export function zoomPhoto(

@@ -131,13 +131,32 @@ body:has(.photo-viewer) [data-slot='dialog-overlay'] {
   background: transparent;
   touch-action: none;
   overscroll-behavior: contain;
-  cursor: zoom-in;
+  cursor: pointer;
 }
 .viewer-stage[data-zoomed] {
   cursor: grab;
 }
 .viewer-stage[data-zoomed][data-interacting] {
   cursor: grabbing;
+}
+.photo-viewer .viewer-side-arrow {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 3;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  border-radius: 50%;
+  background: rgb(12 20 15 / 86%);
+  border-color: rgb(255 255 255 / 32%);
+  box-shadow: 0 2px 12px rgb(0 0 0 / 16%);
+}
+.viewer-stage[data-nav-side='previous'] .viewer-previous,
+.viewer-stage[data-nav-side='next'] .viewer-next {
+  background: #d9ef88;
+  border-color: #d9ef88;
+  color: #1c3016;
 }
 .viewer-stage img {
   display: block;
@@ -188,13 +207,13 @@ body:has(.photo-viewer) [data-slot='dialog-overlay'] {
   align-items: center;
   gap: 12px;
 }
-.viewer-paging,
+.viewer-count,
 .viewer-zoom {
   display: flex;
   align-items: center;
   gap: 6px;
 }
-.viewer-paging > span {
+.viewer-count > span {
   min-width: 50px;
   text-align: center;
   font-size: 1rem;
@@ -218,6 +237,10 @@ body:has(.photo-viewer) [data-slot='dialog-overlay'] {
   padding-right: max(8px, env(safe-area-inset-right));
 }
 @media (hover: hover) and (pointer: fine) {
+  .photo-viewer[data-slot='dialog-content'] {
+    /* Do not animate frame geometry and repeatedly rebase an active mouse drag. */
+    transition: none;
+  }
   .photo-viewer button:not(:disabled):hover {
     background: #ffffff18;
     border-color: #ffffff40;
@@ -269,7 +292,7 @@ body:has(.photo-viewer) [data-slot='dialog-overlay'] {
     grid-column: 1/-1;
     justify-content: center;
   }
-  .viewer-paging {
+  .viewer-count {
     grid-row: 2;
     justify-content: flex-start;
   }
@@ -281,11 +304,11 @@ body:has(.photo-viewer) [data-slot='dialog-overlay'] {
   .viewer-reset {
     margin-left: 0;
   }
-  .viewer-paging,
+  .viewer-count,
   .viewer-zoom {
     gap: 4px;
   }
-  .viewer-paging > span {
+  .viewer-count > span {
     min-width: 30px;
     font-size: 0.875rem;
   }
@@ -358,10 +381,10 @@ body:has(.photo-viewer) [data-slot='dialog-overlay'] {
     gap: 5px;
     padding-inline: 7px;
   }
-  .viewer-paging {
+  .viewer-count {
     gap: 2px;
   }
-  .viewer-paging > span {
+  .viewer-count > span {
     min-width: 30px;
   }
 }
