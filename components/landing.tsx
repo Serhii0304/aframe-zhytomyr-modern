@@ -15,8 +15,6 @@ import {
   X,
   MapPin,
   Plus,
-  ChevronLeft,
-  ChevronRight,
   Expand,
   Mail,
   LoaderCircle,
@@ -39,6 +37,7 @@ import {
   SelectItem,
 } from '@/components/ui/select';
 import { imageDimensions } from '@/lib/images';
+import { PhotoViewer } from '@/components/photo-viewer';
 import { useReveal } from '@/hooks/use-reveal';
 import { normalizePhone, viberLink, telegramLink } from '@/lib/contact';
 import {
@@ -116,7 +115,6 @@ export default function Landing() {
     null,
   );
   const [messenger, setMessenger] = useState<string | null>(null);
-  const touchStart = useRef<number | null>(null);
   const appCleanup = useRef<(() => void) | null>(null);
   useEffect(() => () => appCleanup.current?.(), []);
   function openViber(event: MouseEvent<HTMLAnchorElement>, call = false) {
@@ -158,7 +156,6 @@ export default function Landing() {
   const filtered = gallery.filter(
     (photo) => filter === 'all' || photo.category === filter,
   );
-  const current = selected === null ? null : filtered[selected];
   function selectService(value: string) {
     setType(value);
     document.getElementById('contact')?.scrollIntoView({
@@ -167,34 +164,6 @@ export default function Landing() {
         : 'smooth',
     });
   }
-  function movePhoto(delta: number) {
-    setSelected((value) =>
-      value === null
-        ? null
-        : (value + delta + filtered.length) % filtered.length,
-    );
-  }
-  useEffect(() => {
-    if (selected === null) return;
-    const keydown = (event: KeyboardEvent) => {
-      if (event.key === 'ArrowRight') {
-        event.preventDefault();
-        setSelected((value) =>
-          value === null ? null : (value + 1) % filtered.length,
-        );
-      }
-      if (event.key === 'ArrowLeft') {
-        event.preventDefault();
-        setSelected((value) =>
-          value === null
-            ? null
-            : (value - 1 + filtered.length) % filtered.length,
-        );
-      }
-    };
-    window.addEventListener('keydown', keydown);
-    return () => window.removeEventListener('keydown', keydown);
-  }, [selected, filtered.length]);
   async function submit(event: SubmitEvent<HTMLFormElement>) {
     event.preventDefault();
     if (sending) return;
@@ -1143,60 +1112,12 @@ export default function Landing() {
           </a>
         </DialogContent>
       </Dialog>
-      <Dialog
-        open={selected !== null}
-        onOpenChange={(open) => {
-          if (!open) setSelected(null);
-        }}
-      >
-        <DialogContent className="lightbox" showCloseButton={false}>
-          <div className="lightbox-top">
-            <div>
-              <DialogTitle>{current?.title}</DialogTitle>
-              <DialogDescription>{current?.subtitle}</DialogDescription>
-            </div>
-            <DialogClose className="icon-button" aria-label="Закрити фото">
-              <X />
-            </DialogClose>
-          </div>
-          {current && (
-            <img
-              src={asset(current.image)}
-              alt={current.title + '. ' + current.subtitle}
-              onTouchStart={(event) => {
-                touchStart.current = event.touches[0].clientX;
-              }}
-              onTouchEnd={(event) => {
-                if (touchStart.current !== null) {
-                  const distance =
-                    touchStart.current - event.changedTouches[0].clientX;
-                  if (Math.abs(distance) > 50) movePhoto(distance > 0 ? 1 : -1);
-                }
-                touchStart.current = null;
-              }}
-            />
-          )}
-          <div className="lightbox-bottom">
-            <button
-              className="icon-button"
-              aria-label="Попереднє фото"
-              onClick={() => movePhoto(-1)}
-            >
-              <ChevronLeft />
-            </button>
-            <span aria-live="polite">
-              {(selected ?? 0) + 1} / {filtered.length}
-            </span>
-            <button
-              className="icon-button"
-              aria-label="Наступне фото"
-              onClick={() => movePhoto(1)}
-            >
-              <ChevronRight />
-            </button>
-          </div>
-        </DialogContent>
-      </Dialog>
+      <PhotoViewer
+        photos={filtered}
+        index={selected}
+        onIndexChange={setSelected}
+        onClose={() => setSelected(null)}
+      />
       <Dialog open={privacy} onOpenChange={setPrivacy}>
         <DialogContent className="privacy-dialog" showCloseButton={false}>
           <div className="menu-heading">

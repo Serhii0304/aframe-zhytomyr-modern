@@ -58,7 +58,8 @@
   "overrides": [
     {
       "files": [
-        "components/landing.tsx"
+        "components/landing.tsx",
+        "components/photo-viewer.tsx"
       ],
       "rules": {
         "nextjs/no-img-element": "off"

@@ -11,7 +11,7 @@
     "start": "wrangler dev --config dist/server/wrangler.json",
     "lint": "oxlint",
     "format": "oxfmt",
-    "test": "node --experimental-strip-types --test tests/contact.test.mjs tests/assets.test.mjs",
+    "test": "node --experimental-strip-types --test tests/contact.test.mjs tests/assets.test.mjs tests/photo-zoom.test.mjs",
     "typecheck": "tsc --noEmit",
     "check": "npm run typecheck && npm run lint && npm test",
     "postbuild": "node scripts/finalize-static.mjs"

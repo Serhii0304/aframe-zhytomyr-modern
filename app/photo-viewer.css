@@ -1,0 +1,376 @@
+/* A framed preview first; expanded mode uses the available screen on every device. */
+.photo-viewer[data-slot='dialog-content'] {
+  width: min(1050px, calc(100vw - 64px));
+  max-width: none;
+  height: min(820px, calc(100dvh - 80px));
+  max-height: calc(100dvh - 32px);
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr);
+  gap: 0;
+  padding: 0;
+  overflow: hidden;
+  color: #203022;
+  background: #f7f9f2;
+  border: 1px solid #ffffff60;
+  border-radius: 14px;
+  box-shadow: 0 24px 90px #00000055;
+  transform: none;
+  animation: viewer-enter 160ms ease-out;
+}
+@keyframes viewer-enter {
+  from {
+    opacity: 0.8;
+  }
+  to {
+    opacity: 1;
+  }
+}
+.photo-viewer[data-expanded] {
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100dvh;
+  max-height: none;
+  max-width: none;
+  translate: none;
+  transform: none;
+  border: 0;
+  border-radius: 0;
+  animation: none;
+}
+body:has(.photo-viewer) [data-slot='dialog-overlay'] {
+  background: #071009cb;
+  backdrop-filter: none;
+}
+.viewer-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  padding: 16px 20px;
+  border-bottom: 1px solid #d7e0cd;
+}
+.viewer-title {
+  min-width: 0;
+}
+.viewer-title [data-slot='dialog-title'] {
+  font-family: Manrope, sans-serif;
+  font-size: 1.125rem;
+  font-weight: 650;
+  line-height: 1.4;
+}
+.viewer-title [data-slot='dialog-description'] {
+  color: #596951;
+  font-size: 0.875rem;
+  line-height: 1.5;
+  margin: 4px 0 0;
+}
+.viewer-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+.photo-viewer button,
+.viewer-error a {
+  min-height: 46px;
+  min-width: 46px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  border: 1px solid #cfdbc5;
+  background: #edf2e7;
+  color: #233a22;
+  border-radius: 7px;
+  padding: 9px 12px;
+  font-size: 1rem;
+  line-height: 1.4;
+  font-weight: 600;
+  flex-shrink: 0;
+  touch-action: manipulation;
+}
+.photo-viewer button:focus-visible,
+.viewer-stage:focus-visible,
+.viewer-error a:focus-visible {
+  outline: 3px solid #789945;
+  outline-offset: -3px;
+}
+.photo-viewer button:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+.photo-viewer button svg {
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+}
+.photo-viewer .viewer-close {
+  background: transparent;
+}
+.photo-viewer .viewer-back,
+.photo-viewer .viewer-expand {
+  background: #d9ef88;
+  border-color: #c7df76;
+  color: #1c3016;
+}
+.viewer-body {
+  min-height: 0;
+  display: grid;
+  grid-template-rows: minmax(0, 1fr) auto;
+}
+.viewer-stage {
+  position: relative;
+  min-width: 0;
+  min-height: 0;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  isolation: isolate;
+  background: #101a13;
+  touch-action: none;
+  overscroll-behavior: contain;
+  cursor: zoom-in;
+}
+.viewer-stage[data-zoomed] {
+  cursor: grab;
+}
+.viewer-stage[data-zoomed][data-interacting] {
+  cursor: grabbing;
+}
+.viewer-stage img {
+  display: block;
+  flex-shrink: 0;
+  max-width: none;
+  max-height: none;
+  object-fit: contain;
+  transform-origin: center;
+  pointer-events: none;
+  user-select: none;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .viewer-stage:not([data-interacting]) img {
+    transition: transform 160ms ease-out;
+  }
+}
+.viewer-loading,
+.viewer-error {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #e3eadb;
+  padding: 20px;
+  font-size: 1rem;
+}
+.viewer-error {
+  flex-direction: column;
+  gap: 12px;
+  z-index: 1;
+}
+.viewer-error p {
+  margin: 0;
+}
+.viewer-controls {
+  background: #f7f9f2;
+  padding: 12px 20px 16px;
+  border-top: 1px solid #d7e0cd;
+}
+.viewer-hint {
+  text-align: center;
+  color: #596951;
+  font-size: 0.875rem;
+  line-height: 1.5;
+  margin: 0 0 12px;
+}
+.viewer-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+}
+.viewer-paging,
+.viewer-zoom {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.viewer-paging > span {
+  min-width: 50px;
+  text-align: center;
+  font-size: 1rem;
+  font-variant-numeric: tabular-nums;
+}
+.viewer-zoom output {
+  min-width: 62px;
+  text-align: center;
+  font-size: 1rem;
+  font-weight: 650;
+  font-variant-numeric: tabular-nums;
+}
+.photo-viewer[data-expanded] .viewer-header {
+  padding-top: max(12px, env(safe-area-inset-top));
+  padding-left: max(20px, env(safe-area-inset-left));
+  padding-right: max(20px, env(safe-area-inset-right));
+}
+.photo-viewer[data-expanded] .viewer-controls {
+  padding-bottom: max(12px, env(safe-area-inset-bottom));
+  padding-left: max(20px, env(safe-area-inset-left));
+  padding-right: max(20px, env(safe-area-inset-right));
+}
+@media (hover: hover) and (pointer: fine) {
+  .photo-viewer button:not(:disabled):hover {
+    background: #e0eacb;
+    border-color: #a7bc85;
+  }
+  .photo-viewer .viewer-expand:hover,
+  .photo-viewer .viewer-back:hover {
+    background: #e7f7ac;
+  }
+}
+@media (max-width: 720px) {
+  .photo-viewer[data-slot='dialog-content'] {
+    width: calc(100vw - 24px);
+    height: min(760px, calc(100dvh - 72px));
+    border-radius: 12px;
+  }
+  .photo-viewer[data-expanded] {
+    width: 100%;
+    height: 100dvh;
+    border-radius: 0;
+  }
+  .viewer-header {
+    padding: 12px;
+    gap: 10px;
+    align-items: flex-start;
+  }
+  .viewer-title [data-slot='dialog-title'] {
+    font-size: 1rem;
+  }
+  .viewer-title [data-slot='dialog-description'] {
+    font-size: 0.875rem;
+  }
+  .viewer-close span {
+    display: none;
+  }
+  .photo-viewer .viewer-back {
+    font-size: 0.875rem;
+    padding-inline: 10px;
+  }
+  .viewer-header-actions {
+    gap: 6px;
+  }
+  .viewer-controls {
+    padding: 10px 12px 12px;
+  }
+  .viewer-hint {
+    margin-bottom: 10px;
+    text-align: left;
+  }
+  .viewer-toolbar {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+  .viewer-zoom {
+    grid-row: 1;
+    grid-column: 1/-1;
+    justify-content: center;
+  }
+  .viewer-paging {
+    grid-row: 2;
+    justify-content: flex-start;
+  }
+  .photo-viewer .viewer-expand {
+    grid-row: 2;
+    padding-inline: 10px;
+    font-size: 0.875rem;
+  }
+  .viewer-reset {
+    margin-left: 6px;
+  }
+  .photo-viewer[data-expanded] .viewer-toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  .photo-viewer[data-expanded] .viewer-paging {
+    order: 2;
+  }
+  .photo-viewer[data-expanded] .viewer-header {
+    align-items: center;
+    flex-wrap: wrap;
+  }
+  .photo-viewer[data-expanded] .viewer-title {
+    flex: 1 1 130px;
+  }
+}
+/* Landscape uses a short row, wrapping only when the screen cannot fit it. */
+@media (orientation: landscape) and (max-height: 560px) {
+  .photo-viewer[data-slot='dialog-content'] {
+    width: min(1100px, calc(100vw - 32px));
+    height: calc(100dvh - 32px);
+    max-height: none;
+  }
+  .photo-viewer[data-expanded] {
+    width: 100%;
+    height: 100dvh;
+  }
+  .viewer-header {
+    padding-block: 6px;
+    align-items: center;
+  }
+  .viewer-title [data-slot='dialog-description'],
+  .viewer-hint {
+    display: none;
+  }
+  .viewer-controls {
+    padding-block: 6px;
+  }
+  .viewer-toolbar,
+  .photo-viewer[data-expanded] .viewer-toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    justify-content: space-between;
+  }
+  .viewer-zoom {
+    gap: 4px;
+  }
+  .viewer-zoom output {
+    min-width: 52px;
+  }
+  .viewer-reset {
+    margin-left: 0;
+  }
+  .viewer-reset span,
+  .viewer-close span {
+    display: none;
+  }
+  .photo-viewer .viewer-expand {
+    font-size: 0.875rem;
+  }
+}
+@media (max-width: 359px) {
+  .viewer-toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  .viewer-zoom {
+    width: 100%;
+  }
+  .photo-viewer .viewer-expand {
+    gap: 5px;
+    padding-inline: 7px;
+  }
+  .viewer-paging {
+    gap: 2px;
+  }
+  .viewer-paging > span {
+    min-width: 38px;
+  }
+}

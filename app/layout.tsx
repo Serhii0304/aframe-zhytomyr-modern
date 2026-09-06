@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import './globals.css';
 import './motion.css';
+import './photo-viewer.css';
 const origin =
   process.env.SITE_URL ||
   'https://aframe-zhytomyr-modern.serhii0304.chatgpt.site';
