@@ -69,7 +69,7 @@ npm run build
 
 ## Публікація
 
-GitHub Actions автоматично перевіряє й публікує `main` через GitHub Pages. Налаштування Pages: **GitHub Actions**. Артефакт — `dist/client`; сервер Node для відвідувачів не потрібен.
+GitHub Actions автоматично перевіряє й публікує `main` через GitHub Pages. Налаштування Pages: **GitHub Actions**. Артефакт Pages — `dist/client/aframe-zhytomyr-modern` (Vinext вкладає туди HTML і ресурси з `BASE_PATH`). Для хостингу без префікса використовується `dist/client`; сервер Node для відвідувачів не потрібен.
 
 Для Pages використовуються `BASE_PATH` та `SITE_URL` із workflow. Для хостингу в корені домену залиште `BASE_PATH` порожньою й задайте адресу в `SITE_URL`. Префікс зображень вбудовується під час компіляції, тому браузеру не потрібен `process.env`. Маніфест `.openai/hosting.json` належить окремому приватному перегляду Sites; секретів у ньому немає.
 

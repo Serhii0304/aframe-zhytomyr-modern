@@ -1,12 +1,25 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import assert from 'node:assert/strict';
-const output = path.resolve('dist/client');
+const base = process.env.BASE_PATH || '';
+assert.ok(
+  !base || /^\/[a-zA-Z0-9_-]+(?:\/[a-zA-Z0-9_-]+)*$/.test(base),
+  'Invalid public base path',
+);
+const clientOutput = path.resolve('dist/client');
+// Vinext exports both HTML and assets beneath basePath. Pages adds that prefix
+// itself, so its artifact must begin at this nested directory, not one level up.
+const output = base ? path.join(clientOutput, base.slice(1)) : clientOutput;
+if (base && fs.existsSync(path.join(clientOutput, '404.html'))) {
+  fs.copyFileSync(
+    path.join(clientOutput, '404.html'),
+    path.join(output, '404.html'),
+  );
+}
 const origin = (
   process.env.SITE_URL ||
   'https://aframe-zhytomyr-modern.serhii0304.chatgpt.site'
 ).replace(/\/$/, '');
-const base = process.env.BASE_PATH || '';
 const html = fs.readFileSync(path.join(output, 'index.html'), 'utf8');
 assert.ok(
   html.includes('Будуємо дім.'),
