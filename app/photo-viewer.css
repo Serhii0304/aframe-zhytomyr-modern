@@ -10,7 +10,7 @@
   padding: 0;
   overflow: hidden;
   color: #f3f6ee;
-  background: transparent;
+  background: rgb(17 23 20 / 95%);
   border: 1px solid #ffffff25;
   border-radius: 14px;
   box-shadow: 0 24px 90px #00000055;
@@ -38,7 +38,7 @@
   animation: none;
 }
 body:has(.photo-viewer) [data-slot='dialog-overlay'] {
-  background: #071009b8;
+  background: rgb(4 9 6 / 82%);
   backdrop-filter: none;
 }
 .viewer-header {
@@ -47,7 +47,7 @@ body:has(.photo-viewer) [data-slot='dialog-overlay'] {
   align-items: center;
   gap: 12px;
   padding: 4px 12px;
-  background: #142019df;
+  background: rgb(23 32 27 / 96%);
   border-bottom: 1px solid #ffffff12;
 }
 .viewer-title {
@@ -174,7 +174,7 @@ body:has(.photo-viewer) [data-slot='dialog-overlay'] {
   margin: 0;
 }
 .viewer-controls {
-  background: #142019df;
+  background: rgb(23 32 27 / 96%);
   padding: 6px 12px;
   border-top: 1px solid #ffffff12;
 }
