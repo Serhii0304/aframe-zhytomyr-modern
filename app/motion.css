@@ -1,0 +1,139 @@
+/* Small, finite motion. Content is visible by default, including without JS. */
+@media (prefers-reduced-motion: no-preference) {
+  [data-reveal] {
+    transition:
+      opacity var(--reveal-duration, 600ms) ease var(--reveal-delay, 0ms),
+      translate var(--reveal-duration, 600ms) cubic-bezier(0.2, 0.65, 0.3, 1)
+        var(--reveal-delay, 0ms);
+  }
+  .service-card[data-reveal] {
+    transition:
+      opacity var(--reveal-duration, 600ms) ease var(--reveal-delay, 0ms),
+      translate var(--reveal-duration, 600ms) cubic-bezier(0.2, 0.65, 0.3, 1)
+        var(--reveal-delay, 0ms),
+      transform 250ms ease,
+      border-color 250ms ease;
+  }
+  [data-reveal-pending] {
+    opacity: 0;
+    translate: 0 22px;
+  }
+  [data-reveal]:focus-within {
+    opacity: 1;
+    translate: none;
+    transition-delay: 0ms;
+  }
+  .services-grid > :nth-child(2),
+  .process-grid > :nth-child(2) {
+    --reveal-delay: 80ms;
+  }
+  .services-grid > :nth-child(3),
+  .process-grid > :nth-child(3) {
+    --reveal-delay: 160ms;
+  }
+  .process-grid > :nth-child(4) {
+    --reveal-delay: 240ms;
+  }
+
+  .landing-hero h1 {
+    animation: headline-arrive 650ms cubic-bezier(0.2, 0.65, 0.3, 1) both;
+  }
+  .landing-hero .hero-description {
+    animation: headline-arrive 650ms 80ms cubic-bezier(0.2, 0.65, 0.3, 1) both;
+  }
+  .landing-hero .hero-actions {
+    animation: headline-arrive 650ms 140ms cubic-bezier(0.2, 0.65, 0.3, 1) both;
+  }
+  .projects [data-slot='tabs-content']:not([hidden]) .gallery-grid {
+    animation: gallery-arrive 280ms ease-out;
+  }
+  .faq-list details[open] > p {
+    animation: gallery-arrive 220ms ease-out;
+  }
+  .button > svg,
+  .text-link > svg,
+  .service-action > svg,
+  .gallery-caption > svg {
+    transition: translate 200ms ease;
+  }
+  @media (hover: hover) and (pointer: fine) {
+    .button:hover > svg,
+    .text-link:hover > svg,
+    .service-action:hover > svg,
+    .gallery-item:hover .gallery-caption > svg {
+      translate: 3px -3px;
+    }
+    .landing-background > img {
+      animation: architecture-arrive 1200ms cubic-bezier(0.2, 0.65, 0.3, 1) both;
+    }
+  }
+  @media (max-width: 680px) {
+    [data-reveal],
+    .services-grid > [data-reveal],
+    .process-grid > [data-reveal] {
+      --reveal-duration: 420ms;
+      --reveal-delay: 0ms;
+    }
+    [data-reveal-pending] {
+      translate: 0 12px;
+    }
+    .landing-hero h1,
+    .landing-hero .hero-description,
+    .landing-hero .hero-actions {
+      animation-duration: 450ms;
+      animation-delay: 0ms;
+    }
+  }
+}
+@keyframes headline-arrive {
+  from {
+    opacity: 0.7;
+    translate: 0 14px;
+  }
+  to {
+    opacity: 1;
+    translate: 0 0;
+  }
+}
+@keyframes gallery-arrive {
+  from {
+    opacity: 0.65;
+  }
+  to {
+    opacity: 1;
+  }
+}
+@keyframes architecture-arrive {
+  from {
+    transform: scale(1.025);
+  }
+  to {
+    transform: scale(1);
+  }
+}
+/* Touch users get immediate feedback without sticky hover transforms or blur. */
+@media (hover: none), (pointer: coarse) {
+  .gallery-item:hover img,
+  .service-card:hover,
+  .service-card:hover .service-visual img,
+  .button-accent:hover {
+    transform: none;
+  }
+  .site-header,
+  .mobile-actions {
+    backdrop-filter: none;
+  }
+  .button:active,
+  .service-action:active {
+    opacity: 0.85;
+  }
+}
+@media (prefers-reduced-motion: reduce), print {
+  [data-reveal],
+  [data-reveal-pending] {
+    opacity: 1;
+    translate: none;
+    transform: none;
+    transition: none !important;
+  }
+}

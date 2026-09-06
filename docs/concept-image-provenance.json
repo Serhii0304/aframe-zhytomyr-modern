@@ -1,0 +1,12 @@
+{
+  "mode": "built-in image_gen",
+  "purpose": "Original fictional architectural concept illustrations. Must not be represented as completed client projects.",
+  "prompts": [
+    "Use case: photorealistic-natural\nAsset type: original architectural CONCEPT illustration for premium Ukrainian construction landing page, landscape wide cinematic hero, 16:9.\nPrimary request: a premium physically plausible A-frame home in a birch and pine forest, original fictional design.\nSubject: dark standing seam metal A-frame roof, floor-to-ceiling warm glass facade, understated natural timber deck, carefully resolved architectural details.\nStyle/medium: sophisticated realistic architecture photography, premium editorial quality, subtle real textures, believable structure and glass.\nComposition/framing: wide landscape; the house occupies the RIGHT 60 percent of the frame; LEFT 40 percent contains shadowed foliage and quiet negative space suitable for later overlaid white typography. Show the home fully enough to appreciate its triangular form and deck.\nLighting/mood: soft late afternoon transitioning into blue hour, warm amber interior glow.\nColor palette: natural olive-black forest and roof, warm amber interior, restrained natural timber.\nText: none.\nAvoid: people, cars, pools, watermarks, logos, signage, writing, collage, UI, impossible architectural structure. Generate one image.",
+    "Use case: photorealistic-natural\nAsset type: original architectural CONCEPT illustration for construction website, horizontal editorial image, landscape 16:9.\nPrimary request: compact modern RECTANGULAR single-floor modular timber-clad house at a forest edge, original fictional design.\nSubject: simple modern rectangular prefabricated modules, flat or very low slope dark roof, horizontal clean geometry, panoramic windows, understated timber deck. Clearly rectangular and distinctly unlike a triangular A-frame.\nStyle/medium: realistic premium editorial architecture photography, believable construction and materials, subtle natural timber grain and glass reflections.\nComposition/framing: horizontal landscape three-quarter exterior view showing the full compact house and its rectangular massing among trees.\nLighting/mood: bright warm natural daylight, quiet and welcoming.\nText: none.\nAvoid: triangular A-frame, steep roof, people, cars, pools, watermarks, logos, signage, writing, collage, UI, impossible structure. Generate one image."
+  ],
+  "files": [
+    "a-frame-concept.png",
+    "modular-concept.png"
+  ]
+}
