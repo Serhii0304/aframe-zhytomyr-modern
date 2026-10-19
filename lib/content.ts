@@ -13,6 +13,24 @@ export const navigation = [
 ];
 export const gallery = [
   {
+    image: 'house-stairs',
+    title: 'Тераса й сходи',
+    subtitle: 'Екстер’єр · фото з портфоліо',
+    category: 'portfolio',
+  },
+  {
+    image: 'house-front',
+    title: 'Будинок із критою терасою',
+    subtitle: 'Екстер’єр · фото з портфоліо',
+    category: 'portfolio',
+  },
+  {
+    image: 'house-deck',
+    title: 'Панорамне скління',
+    subtitle: 'Екстер’єр · фото з портфоліо',
+    category: 'portfolio',
+  },
+  {
     image: 'exterior-1',
     title: 'А-фрейм із терасою',
     subtitle: 'Екстер’єр · об’єкт у процесі робіт',

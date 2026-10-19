@@ -156,6 +156,13 @@ export default function Landing() {
   const filtered = gallery.filter(
     (photo) => filter === 'all' || photo.category === filter,
   );
+  // Рахуємо з даних: вписані вручну числа розходилися б із галереєю
+  const count = (category?: string) =>
+    String(
+      category
+        ? gallery.filter((photo) => photo.category === category).length
+        : gallery.length,
+    ).padStart(2, '0');
   function selectService(value: string) {
     setType(value);
     document.getElementById('contact')?.scrollIntoView({
@@ -327,8 +334,8 @@ export default function Landing() {
             </div>
             <a className="hero-project-card" href="#projects">
               <Photo
-                name="exterior-1"
-                alt="Об’єкт А-фрейм із вихідного портфоліо"
+                name="house-stairs"
+                alt="Тераса зі сходами — фото з портфоліо"
                 sizes="120px"
               />
               <div>
@@ -436,13 +443,13 @@ export default function Landing() {
               aria-label="Категорії фотографій"
             >
               <TabsTrigger value="portfolio">
-                Портфоліо <span>04</span>
+                Портфоліо <span>{count('portfolio')}</span>
               </TabsTrigger>
               <TabsTrigger value="ideas">
-                Приклади та ідеї <span>07</span>
+                Приклади та ідеї <span>{count('ideas')}</span>
               </TabsTrigger>
               <TabsTrigger value="all">
-                Усі фото <span>11</span>
+                Усі фото <span>{count()}</span>
               </TabsTrigger>
             </TabsList>
             {['portfolio', 'ideas', 'all'].map((tab) => (
@@ -524,19 +531,19 @@ export default function Landing() {
                         service.number === '01'
                           ? 'a-frame-concept'
                           : service.number === '02'
-                            ? 'frame-3'
+                            ? 'house-front'
                             : 'modular-concept'
                       }
                       alt={
                         service.number === '02'
-                          ? 'Приклад дерев’яного каркаса'
+                          ? 'Каркасний будинок із критою терасою — фото з портфоліо'
                           : 'Концептуальна візуалізація формату будинку'
                       }
                       sizes="(max-width: 680px) 100vw, 33vw"
                     />
                     <span>
                       {service.number === '02'
-                        ? 'ПРИКЛАД КОНСТРУКЦІЇ'
+                        ? 'ЕКСТЕР’ЄР · З ПОРТФОЛІО'
                         : 'КОНЦЕПТУАЛЬНА ВІЗУАЛІЗАЦІЯ'}
                     </span>
                   </div>

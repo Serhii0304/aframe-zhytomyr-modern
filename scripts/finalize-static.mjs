@@ -46,8 +46,12 @@ assert.ok(
   'Viber fallback link must be available without JS',
 );
 assert.ok(
-  html.includes('og:image'),
-  'The messenger preview must have an image',
+  html.includes('og:image') && html.includes('/images/og-cover.jpg'),
+  'The messenger preview must use the JPEG cover',
+);
+assert.ok(
+  fs.existsSync(path.join(output, 'images', 'og-cover.jpg')),
+  'The messenger preview image must be exported',
 );
 assert.ok(
   fs.existsSync(path.join(output, '404.html')),

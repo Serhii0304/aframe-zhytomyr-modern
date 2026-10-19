@@ -6,6 +6,8 @@ import './surfaces.css';
 const origin =
   process.env.SITE_URL ||
   'https://aframe-zhytomyr-modern.serhii0304.chatgpt.site';
+// JPEG, а не WebP: не всі месенджери показують WebP у превʼю посилання
+const shareImage = `${origin.replace(/\/$/, '')}/images/og-cover.jpg`;
 export const metadata: Metadata = {
   metadataBase: new URL(origin),
   title: 'А-ФРЕЙМ — каркасні будинки у Житомирській та Київській областях',
@@ -21,17 +23,17 @@ export const metadata: Metadata = {
     url: origin,
     images: [
       {
-        url: `${origin.replace(/\/$/, '')}/images/hero.webp`,
-        width: 1494,
-        height: 996,
-        alt: 'Архітектурний приклад будинку А-фрейм',
+        url: shareImage,
+        width: 1200,
+        height: 630,
+        alt: 'Каркасний будинок із критою терасою — фото з портфоліо',
       },
     ],
   },
   twitter: {
     card: 'summary_large_image',
     title: 'А-ФРЕЙМ — простір для вашого життя',
-    images: [`${origin.replace(/\/$/, '')}/images/hero.webp`],
+    images: [shareImage],
   },
   icons: { icon: `${process.env.BASE_PATH || ''}/favicon.svg` },
 };
@@ -51,6 +53,7 @@ export default function RootLayout({
               '@type': 'HomeAndConstructionBusiness',
               name: 'А-ФРЕЙМ',
               url: origin,
+              image: shareImage,
               telephone: '+380970864989',
               email: 'Avessalom7@gmail.com',
               areaServed: [
