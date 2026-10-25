@@ -47,6 +47,7 @@ import {
   EMAIL,
   navigation,
   gallery,
+  galleryCategories,
   services,
   faq,
 } from '@/lib/content';
@@ -74,11 +75,13 @@ function Photo({
   alt,
   priority = false,
   sizes = '(max-width: 680px) 100vw, 45vw',
+  position,
 }: {
   name: string;
   alt: string;
   priority?: boolean;
   sizes?: string;
+  position?: string;
 }) {
   const meta = imageDimensions[name];
   const srcSet = [
@@ -97,6 +100,7 @@ function Photo({
       loading={priority ? 'eager' : 'lazy'}
       fetchPriority={priority ? 'high' : 'auto'}
       decoding="async"
+      style={position ? { objectPosition: position } : undefined}
     />
   );
 }
@@ -104,7 +108,7 @@ function Photo({
 export default function Landing() {
   const revealRoot = useReveal();
   const [menu, setMenu] = useState(false);
-  const [filter, setFilter] = useState('portfolio');
+  const [filter, setFilter] = useState('all');
   const [selected, setSelected] = useState<number | null>(null);
   const [type, setType] = useState<string | null>('Будинки А-фрейм');
   const [consent, setConsent] = useState(false);
@@ -163,6 +167,9 @@ export default function Landing() {
         ? gallery.filter((photo) => photo.category === category).length
         : gallery.length,
     ).padStart(2, '0');
+  // Мозаїка (високий слот, два малі, широка смуга) + повні ряди по три.
+  // Вмикаємо, лише коли фото рівно її заповнюють — без самотніх плиток.
+  const featured = filtered.length >= 4 && (filtered.length - 4) % 3 === 0;
   function selectService(value: string) {
     setType(value);
     document.getElementById('contact')?.scrollIntoView({
@@ -334,8 +341,8 @@ export default function Landing() {
             </div>
             <a className="hero-project-card" href="#projects">
               <Photo
-                name="house-stairs"
-                alt="Тераса зі сходами — фото з портфоліо"
+                name="aframe-front"
+                alt="Фасад А-фрейму — фото з портфоліо"
                 sizes="120px"
               />
               <div>
@@ -442,20 +449,17 @@ export default function Landing() {
               className="gallery-tabs"
               aria-label="Категорії фотографій"
             >
-              <TabsTrigger value="portfolio">
-                Портфоліо <span>{count('portfolio')}</span>
-              </TabsTrigger>
-              <TabsTrigger value="ideas">
-                Приклади та ідеї <span>{count('ideas')}</span>
-              </TabsTrigger>
-              <TabsTrigger value="all">
-                Усі фото <span>{count()}</span>
-              </TabsTrigger>
+              {galleryCategories.map(([value, label]) => (
+                <TabsTrigger value={value} key={value}>
+                  {label}{' '}
+                  <span>{count(value === 'all' ? undefined : value)}</span>
+                </TabsTrigger>
+              ))}
             </TabsList>
-            {['portfolio', 'ideas', 'all'].map((tab) => (
+            {galleryCategories.map(([tab]) => (
               <TabsContent key={tab} value={tab}>
                 <div
-                  className={`gallery-grid ${filter === 'portfolio' ? 'gallery-featured' : ''}`}
+                  className={`gallery-grid ${featured ? 'gallery-featured' : ''}`}
                 >
                   {filtered.map((photo, index) => (
                     <button
@@ -467,19 +471,15 @@ export default function Landing() {
                       <div className="gallery-image">
                         <Photo
                           sizes={
-                            filter === 'portfolio' &&
-                            (index === 0 || index === 3)
+                            featured && (index === 0 || index === 3)
                               ? '(max-width: 680px) 100vw, (max-width: 950px) 50vw, 45vw'
                               : '(max-width: 370px) 100vw, (max-width: 950px) 50vw, 30vw'
                           }
                           name={photo.image}
                           alt={photo.title + '. ' + photo.subtitle}
+                          position={photo.position}
                         />
-                        <span className="image-badge">
-                          {photo.category === 'portfolio'
-                            ? 'З ПОРТФОЛІО'
-                            : 'ПРИКЛАД'}
-                        </span>
+                        <span className="image-badge">З ПОРТФОЛІО</span>
                         <span className="image-expand">
                           <Expand size={19} />
                         </span>
@@ -498,8 +498,8 @@ export default function Landing() {
             ))}
           </Tabs>
           <p className="gallery-note">
-            Фото з портфоліо та архітектурні приклади розділені. Приклади
-            показують можливі рішення й не є виконаними нами об’єктами.
+            Усі фото в галереї — наші об’єкти. Частину знято в процесі
+            будівництва: так видно, як влаштовані каркас, покрівля й тераса.
           </p>
         </section>
         <section className="services-section" id="services">
@@ -529,22 +529,24 @@ export default function Landing() {
                     <Photo
                       name={
                         service.number === '01'
-                          ? 'a-frame-concept'
+                          ? 'aframe-group'
                           : service.number === '02'
                             ? 'house-front'
                             : 'modular-concept'
                       }
                       alt={
-                        service.number === '02'
-                          ? 'Каркасний будинок із критою терасою — фото з портфоліо'
-                          : 'Концептуальна візуалізація формату будинку'
+                        service.number === '01'
+                          ? 'А-фрейми серед лісу — фото з портфоліо'
+                          : service.number === '02'
+                            ? 'Каркасний будинок із критою терасою — фото з портфоліо'
+                            : 'Концептуальна візуалізація формату будинку'
                       }
                       sizes="(max-width: 680px) 100vw, 33vw"
                     />
                     <span>
-                      {service.number === '02'
-                        ? 'ЕКСТЕР’ЄР · З ПОРТФОЛІО'
-                        : 'КОНЦЕПТУАЛЬНА ВІЗУАЛІЗАЦІЯ'}
+                      {service.number === '03'
+                        ? 'КОНЦЕПТУАЛЬНА ВІЗУАЛІЗАЦІЯ'
+                        : 'ЕКСТЕР’ЄР · З ПОРТФОЛІО'}
                     </span>
                   </div>
                   <div className="service-top">

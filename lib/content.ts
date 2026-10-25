@@ -11,90 +11,85 @@ export const navigation = [
   ['Як працюємо', '#how-we-build'],
   ['Контакти', '#contact'],
 ];
-export const gallery = [
+// Лише фото обʼєктів бригади. Приклади з інтернету прибрано (жовтень 2026):
+// вистачає власних фото, а чужі знімки на комерційному сайті — ризик щодо прав.
+// Порядок підібрано під мозаїку «Усі»: 1-й слот високий, 2-й і 3-й малі,
+// 4-й — широка смуга, далі рядки по три. `position` — точка фокусу кадру
+// (object-position), щоб у горизонтальних плитках не зрізалась вершина А-фрейму.
+export const galleryCategories = [
+  ['all', 'Усі'],
+  ['aframe', 'А-фрейми'],
+  ['house', 'Будинки'],
+  ['interior', 'Інтер’єри'],
+] as const;
+export const gallery: {
+  image: string;
+  title: string;
+  subtitle: string;
+  category: 'aframe' | 'house' | 'interior';
+  position?: string;
+}[] = [
   {
-    image: 'house-stairs',
-    title: 'Тераса й сходи',
+    image: 'aframe-front',
+    title: 'Фасад А-фрейму',
+    subtitle: 'Екстер’єр · об’єкт у процесі робіт',
+    category: 'aframe',
+  },
+  {
+    image: 'house-porch',
+    title: 'Тераса з дерев’яними перилами',
     subtitle: 'Екстер’єр · фото з портфоліо',
-    category: 'portfolio',
+    category: 'house',
   },
   {
     image: 'house-front',
     title: 'Будинок із критою терасою',
     subtitle: 'Екстер’єр · фото з портфоліо',
-    category: 'portfolio',
+    category: 'house',
   },
   {
-    image: 'house-deck',
-    title: 'Панорамне скління',
+    image: 'aframe-group',
+    title: 'А-фрейми серед лісу',
     subtitle: 'Екстер’єр · фото з портфоліо',
-    category: 'portfolio',
+    category: 'aframe',
+  },
+  {
+    image: 'aframe-side',
+    title: 'Конструкція даху',
+    subtitle: 'Екстер’єр · об’єкт у процесі робіт',
+    category: 'aframe',
+    position: '50% 25%',
+  },
+  {
+    image: 'house-stairs',
+    title: 'Тераса й сходи',
+    subtitle: 'Екстер’єр · фото з портфоліо',
+    category: 'house',
   },
   {
     image: 'exterior-1',
     title: 'А-фрейм із терасою',
     subtitle: 'Екстер’єр · об’єкт у процесі робіт',
-    category: 'portfolio',
+    category: 'aframe',
+    position: '50% 30%',
   },
   {
     image: 'interior-1',
     title: 'Простір усередині',
     subtitle: 'Інтер’єр · фото з портфоліо',
-    category: 'portfolio',
+    category: 'interior',
   },
   {
     image: 'interior-2',
     title: 'Деталі інтер’єру',
     subtitle: 'Інтер’єр · фото з портфоліо',
-    category: 'portfolio',
+    category: 'interior',
   },
   {
     image: 'interior-3',
     title: 'Дерево та світло',
     subtitle: 'Інтер’єр · фото з портфоліо',
-    category: 'portfolio',
-  },
-  {
-    image: 'hero',
-    title: 'Панорамний А-фрейм',
-    subtitle: 'Архітектурний приклад',
-    category: 'ideas',
-  },
-  {
-    image: 'frame-1',
-    title: 'Конструкція будинку',
-    subtitle: 'Приклад каркасної конструкції',
-    category: 'ideas',
-  },
-  {
-    image: 'frame-2',
-    title: 'Геометрія каркаса',
-    subtitle: 'Приклад конструктивного рішення',
-    category: 'ideas',
-  },
-  {
-    image: 'frame-3',
-    title: 'Каркасний формат',
-    subtitle: 'Приклад будівельного рішення',
-    category: 'ideas',
-  },
-  {
-    image: 'model-3d',
-    title: 'Об’єм і планування',
-    subtitle: 'Концепція · 3D-візуалізація',
-    category: 'ideas',
-  },
-  {
-    image: 'model-red',
-    title: 'Будинок із характером',
-    subtitle: 'Приклад архітектурного рішення',
-    category: 'ideas',
-  },
-  {
-    image: 'dusk-vertical',
-    title: 'Вечірнє світло',
-    subtitle: 'Архітектурний приклад',
-    category: 'ideas',
+    category: 'interior',
   },
 ];
 export const services = [
@@ -140,6 +135,6 @@ export const faq = [
   ],
   [
     'Чи всі фотографії показують ваші роботи?',
-    'У галереї окремо представлені фото з вихідного портфоліо та архітектурні приклади. Приклади й візуалізації допомагають обговорити бажаний вигляд будинку та не є підтвердженням виконаних нами робіт.',
+    'Так, у галереї лише фото наших об’єктів, частину знято в процесі будівництва. Ілюстрації на першому екрані та в картці модульних будинків — концептуальні візуалізації, вони підписані окремо.',
   ],
 ];
